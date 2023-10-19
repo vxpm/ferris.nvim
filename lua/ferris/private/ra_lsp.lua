@@ -70,18 +70,4 @@ function M.current_buf_has_ra()
     return M.ra_client_id() ~= nil
 end
 
----Returns the capabilities of the Rust-Analyzer client
----@return lsp.ServerCapabilities? # Rust-Analyzer's capabilities
-function M.ra_capabilities()
-    local ra_id = M.ra_client_id()
-    if ra_id == nil then
-        return nil
-    end
-
-    local ra_client = vim.lsp.get_client_by_id(ra_id)
-    ---@cast ra_client -nil
-
-    return ra_client.server_capabilities
-end
-
 return M
