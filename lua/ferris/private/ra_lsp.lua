@@ -18,14 +18,24 @@ local M = {}
 ---@param handler fun(response: LspResponse?) # Handler to call after the request is completed.
 local function inner_request(full_method, params, handler)
     ---@param responses table<integer, LspResponse?>
-    local extract_first_response = function(responses)
-        for _, response in ipairs(responses) do
+    local extract_response = function(responses)
+        local rust_analayzer_response = responses[M.ra_client_id()]
+
+        -- If one of the responses comes from rust-analayzer - prefer it.
+        if rust_analayzer_response ~= nil then
+            handler(rust_analayzer_response)
+            return
+        end
+
+        -- Otherwise, just pick any response. Don't use ipairs, because it
+        -- won't work if there are nil responses in the middle of the list.
+        for _, response in pairs(responses) do
             handler(response)
             return
         end
     end
 
-    vim.lsp.buf_request_all(0, full_method, params, extract_first_response)
+    vim.lsp.buf_request_all(0, full_method, params, extract_response)
 end
 
 ---Tries to sends a LSP request to Rust-Analayzer.
