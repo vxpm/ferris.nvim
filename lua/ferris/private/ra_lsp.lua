@@ -47,7 +47,13 @@ end
 ---Returns the client ID of Rust-Analyzer in the current buffer
 ---@return integer? # The client ID
 function M.ra_client_id()
-    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    local clients = {}
+    local vim_version = vim.version()
+    if vim_version.minor <= 9 then
+        clients = vim.lsp.buf_get_clients()
+    else
+        clients = vim.lsp.get_clients({ bufnr = 0 })
+    end
 
     for _, client in ipairs(clients) do
         if client.name == "rust_analyzer" then
