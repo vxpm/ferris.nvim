@@ -22,11 +22,10 @@ end
 ---raise an error if not
 ---@return boolean # Whether Rust-Analyzer is attached or not
 function M.ensure_ra()
-    -- FIX: this is currently not reliable
-    -- if not lsp.current_buf_has_ra() then
-    --     M.raise("no rust-analyzer instance found attached to current buffer")
-    --     return false
-    -- end
+    if not lsp.current_buf_has_ra() then
+        M.raise("no rust-analyzer instance found attached to current buffer")
+        return false
+    end
 
     return true
 end
