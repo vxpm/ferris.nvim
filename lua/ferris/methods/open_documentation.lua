@@ -20,7 +20,7 @@ local function open_documentation()
 
             local url = response.result["local"] or response.result.web or response.result
 
-            if type(config.opts.url_handler ~= "string") then
+            if type(config.opts.url_handler) ~= "string" then
                 config.opts.url_handler(url)
                 return
             end
