@@ -246,7 +246,7 @@ function FieldGrid:render_divisor(row)
 
         local cell_has_field = row_elements[column] ~= nil
         local next_row_cell_has_field = next_row_elements[column] ~= nil
-        if next_row_offset == nil or next_row_cell_has_field or (cell_has_field and past_next_row_max) then
+        if next_row_offset == nil or next_row_cell_has_field or (not past_row_max and past_next_row_max) then
             divisor = divisor .. string.rep("─", self:column_width(column) + 2) .. "┼"
         else
             divisor = divisor .. string.rep(" ", self:column_width(column) + 2) .. "┼"
