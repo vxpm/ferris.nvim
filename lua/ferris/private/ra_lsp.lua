@@ -12,18 +12,18 @@ local M = {}
 ---@field result any? # The result of the request when successful.
 ---@field error LspResponseError? # The error of the request when unsuccessful.
 
----Tries to sends a LSP request to Rust-Analayzer.
+---Tries to sends a LSP request to Rust-Analyzer.
 ---@param full_method string # The full LSP method of the request.
 ---@param params table? # Parameters of the request.
 ---@param handler fun(response: LspResponse?) # Handler to call after the request is completed.
 local function inner_request(full_method, params, handler)
     ---@param responses table<integer, LspResponse?>
     local extract_response = function(responses)
-        local rust_analayzer_response = responses[M.ra_client_id()]
+        local rust_analyzer_response = responses[M.ra_client_id()]
 
-        -- If one of the responses comes from rust-analayzer - prefer it.
-        if rust_analayzer_response ~= nil then
-            handler(rust_analayzer_response)
+        -- If one of the responses comes from rust-analyzer - prefer it.
+        if rust_analyzer_response ~= nil then
+            handler(rust_analyzer_response)
             return
         end
 
@@ -38,7 +38,7 @@ local function inner_request(full_method, params, handler)
     vim.lsp.buf_request_all(0, full_method, params, extract_response)
 end
 
----Tries to sends a LSP request to Rust-Analayzer.
+---Tries to sends a LSP request to Rust-Analyzer.
 ---@param method string # The LSP method of the request.
 ---@param params table? # Parameters of the request.
 ---@param handler fun(response: LspResponse?) # Handler to call after the request is completed.
@@ -46,7 +46,7 @@ function M.request(method, params, handler)
     inner_request("rust-analyzer/" .. method, params, handler)
 end
 
----Tries to sends an experimental LSP request to Rust-Analayzer.
+---Tries to sends an experimental LSP request to Rust-Analyzer.
 ---@param method string # The experimental LSP method of the request.
 ---@param params table? # Parameters of the request.
 ---@param handler fun(response: LspResponse?) # Handler to call after the request is completed.
