@@ -46,6 +46,12 @@ you're using the `opts` field in lazy.nvim)
 </details>
 
 <details>
+<summary>Join Lines</summary>
+
+`require("ferris.methods.join_lines")`
+</details>
+
+<details>
 <summary>View HIR</summary>
 
 `require("ferris.methods.view_hir")`
@@ -67,6 +73,18 @@ you're using the `opts` field in lazy.nvim)
 `require("ferris.methods.view_memory_layout")`
 
 [![image.png](https://i.postimg.cc/02wQ5WkB/image.png)](https://postimg.cc/56f1nmFB)
+</details>
+
+<details>
+<summary>View Item Tree</summary>
+
+`require("ferris.methods.view_item_tree")`
+</details>
+
+<details>
+<summary>View Syntax Tree</summary>
+
+`require("ferris.methods.view_syntax_tree")`
 </details>
 
 <details>
