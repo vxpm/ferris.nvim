@@ -6,7 +6,7 @@ local error = require("ferris.private.error")
 local function expand_macro()
     if not error.ensure_ra() then return end
 
-    lsp.request("expandMacro", vim.lsp.util.make_position_params(), function(response)
+    lsp.request("expandMacro", vim.lsp.util.make_position_params(0, lsp.offset_encoding()), function(response)
         if response.result == nil then
             if response.error == nil then
                 error.raise(

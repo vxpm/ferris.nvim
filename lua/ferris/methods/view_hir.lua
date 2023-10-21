@@ -6,7 +6,7 @@ local error = require("ferris.private.error")
 local function view_hir()
     if not error.ensure_ra() then return end
 
-    lsp.request("viewHir", vim.lsp.util.make_position_params(), function(response)
+    lsp.request("viewHir", vim.lsp.util.make_position_params(0, lsp.offset_encoding()), function(response)
         if response.result == nil or response.result == "Not inside a function body" then
             if response.error == nil then
                 local suffix = ((response.result and

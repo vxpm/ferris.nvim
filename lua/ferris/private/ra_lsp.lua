@@ -77,10 +77,13 @@ function M.ra_client_id()
         return nil
     end
 
-    ---Tries to acquire Rust-Analyzer's ID from a response
+    ---Tries to acquire Rust-Analyzer's ID from a response to a
+    ---Rust-Analyzer specific request
     ---@param clients lsp.Client[]
     local function from_response(clients)
         for _, client in pairs(clients) do
+            -- WARN: luals says this is private - but neovim api does not say anything
+            -- about it being so..
             local response = client.request_sync("rust-analyzer/analyzerStatus", {}, 100, 0)
             if response ~= nil then
                 return client.id
@@ -90,8 +93,22 @@ function M.ra_client_id()
         return nil
     end
 
-
     return from_name(clients) or from_response(clients)
+end
+
+---Returns Rust-Analyzer's client offset encoding. If no client is found in the
+---current buffer, returns "utf-16".
+---@return string
+function M.offset_encoding()
+    local ra_id = M.ra_client_id()
+    if ra_id == nil then
+        return "utf-16"
+    end
+
+    local ra = vim.lsp.get_client_by_id(ra_id)
+    ---@cast ra -nil
+
+    return ra.offset_encoding
 end
 
 ---Tests for the presence of Rust-Analyzer in the current buffer
