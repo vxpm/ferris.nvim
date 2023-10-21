@@ -65,13 +65,33 @@ function M.ra_client_id()
         clients = vim.lsp.get_clients({ bufnr = 0 })
     end
 
-    for _, client in ipairs(clients) do
-        if client.name == "rust_analyzer" then
-            return client.id
+    ---Tries to acquire Rust-Analyzer's ID from the client name
+    ---@param clients lsp.Client[]
+    local function from_name(clients)
+        for _, client in pairs(clients) do
+            if client.name == "rust_analyzer" then
+                return client.id
+            end
         end
+
+        return nil
     end
 
-    return nil
+    ---Tries to acquire Rust-Analyzer's ID from a response
+    ---@param clients lsp.Client[]
+    local function from_response(clients)
+        for _, client in pairs(clients) do
+            local response = client.request_sync("rust-analyzer/analyzerStatus", {}, 100, 0)
+            if response ~= nil then
+                return client.id
+            end
+        end
+
+        return nil
+    end
+
+
+    return from_name(clients) or from_response(clients)
 end
 
 ---Tests for the presence of Rust-Analyzer in the current buffer
