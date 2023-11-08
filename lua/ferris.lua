@@ -9,7 +9,12 @@ function M.setup(opts)
             group = vim.api.nvim_create_augroup("ferris_commands", { clear = true }),
             desc = "Add Ferris user commands to rust_analyzer buffers",
             callback = function(args)
-                if vim.lsp.get_client_by_id(args.data.client_id).name == "rust_analyzer" then
+                local lsp = require("ferris.private.ra_lsp")
+
+                local client = vim.lsp.get_client_by_id(args.data.client_id)
+                ---@cast client -nil
+
+                if lsp.client_is_ra(client) then
                     M.create_commands(args.buf)
                 end
             end,
@@ -17,7 +22,7 @@ function M.setup(opts)
     end
 end
 
---- Create user commands for the methods provided by Ferris
+---Create user commands for the methods provided by Ferris
 ---@param bufnr? integer Optional buffer number to only add the commands to a given buffer. Default behavior is to create global user commands
 function M.create_commands(bufnr)
     local function cmd(name, module, opts)
