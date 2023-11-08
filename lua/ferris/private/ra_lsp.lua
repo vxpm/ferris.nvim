@@ -54,53 +54,50 @@ function M.experimental_request(method, params, handler)
     inner_request("experimental/" .. method, params, handler)
 end
 
----Returns the client ID of Rust-Analyzer in the current buffer
----@return integer? # The client ID
-function M.ra_client_id()
+---Returns whether a client is Rust-Analyzer or not.
+---@param client lsp.Client
+---@return boolean
+function M.client_is_ra(client)
+    -- test by name
+    if client.name == "rust_analyzer" then
+        return true
+    end
+
+    -- test by a rust-analyzer specific request
+    -- WARN: lua_ls says this is private - but neovim api does not say anything
+    -- about it being so..
+    local response = client.request_sync("rust-analyzer/analyzerStatus", {}, 100, 0)
+    return response ~= nil and response.result ~= nil
+end
+
+---Returns the client ID of Rust-Analyzer in the given buffer.
+---@param bufnr integer? # The buffer number or nil for current
+---@return integer? # The client ID or nil if RA is not found
+function M.ra_client_id(bufnr)
+    local bufnr = bufnr or 0
     local clients = {}
     local vim_version = vim.version()
     if vim_version.minor <= 9 then
-        clients = vim.lsp.buf_get_clients()
+        clients = vim.lsp.buf_get_clients(bufnr)
     else
-        clients = vim.lsp.get_clients({ bufnr = 0 })
+        clients = vim.lsp.get_clients({ bufnr = bufnr })
     end
 
-    ---Tries to acquire Rust-Analyzer's ID from the client name
-    ---@param clients lsp.Client[]
-    local function from_name(clients)
-        for _, client in pairs(clients) do
-            if client.name == "rust_analyzer" then
-                return client.id
-            end
+    for _, client in pairs(clients) do
+        if M.client_is_ra(client) then
+            return client.id
         end
-
-        return nil
     end
 
-    ---Tries to acquire Rust-Analyzer's ID from a response to a
-    ---Rust-Analyzer specific request
-    ---@param clients lsp.Client[]
-    local function from_response(clients)
-        for _, client in pairs(clients) do
-            -- WARN: luals says this is private - but neovim api does not say anything
-            -- about it being so..
-            local response = client.request_sync("rust-analyzer/analyzerStatus", {}, 100, 0)
-            if response ~= nil then
-                return client.id
-            end
-        end
-
-        return nil
-    end
-
-    return from_name(clients) or from_response(clients)
+    return nil
 end
 
 ---Returns Rust-Analyzer's client offset encoding. If no client is found in the
 ---current buffer, returns "utf-16".
+---@param bufnr integer? # The buffer number or nil for current
 ---@return string
-function M.offset_encoding()
-    local ra_id = M.ra_client_id()
+function M.offset_encoding(bufnr)
+    local ra_id = M.ra_client_id(bufnr)
     if ra_id == nil then
         return "utf-16"
     end
