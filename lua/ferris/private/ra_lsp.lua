@@ -59,7 +59,7 @@ end
 ---@return boolean
 function M.client_is_ra(client)
     -- test by name
-    if client.name == "rust_analyzer" then
+    if client.name == "rust_analyzer" or client.name == "rust-analyzer" then
         return true
     end
 
