@@ -7,7 +7,7 @@ _note: this plugin has only been tested with neovim 0.9+_
 with lazy.nvim:
 ```lua
 {
-    'vxpm/ferris.nvim'
+    'vxpm/ferris.nvim',
     opts = {
         -- your options here
     }
