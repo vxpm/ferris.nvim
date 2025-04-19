@@ -23,7 +23,11 @@ local function open_parent_module()
                 position = position[1]
             end
 
-            vim.lsp.util.jump_to_location(position, "utf-8", true)
+            if vim.fn.has "nvim-0.11" == 1 then
+              vim.lsp.util.show_document(position, "utf-8", { reuse_win = true, focus = true })
+            else
+              vim.lsp.util.jump_to_location(position, "utf-8", true)
+            end
         end)
 end
 
