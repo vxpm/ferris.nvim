@@ -1,5 +1,5 @@
 # ferris.nvim 🦀
-a neovim plugin for interacting with Rust Analyzer's LSP extensions
+a simple neovim plugin for interacting with Rust Analyzer's LSP extensions
 
 ## installation & usage
 _note: this plugin has only been tested with neovim 0.9+_
@@ -118,6 +118,9 @@ you're using the `opts` field in lazy.nvim)
 `require("ferris.methods.rebuild_macros")`
 </details>
 
+## contributing
+just send a PR! i'll review & (hopefully) merge it as soon as i can :)
+
 ## special thanks
 [rust-tools](https://github.com/simrat39/rust-tools.nvim) for being the reason why this plugins exists.
 initially, i didn't want any of the features it offered _except_ for recursive expansion of macros, so i made [rust-expand-macro.nvim](https://github.com/vxpm/rust-expand-macro.nvim).
@@ -125,4 +128,8 @@ initially, i didn't want any of the features it offered _except_ for recursive e
 however, i found myself wanting to use other methods as well, which led me to making ferris!
 
 in comparison to rust-tools, this plugin is "simpler": it does not configure Rust Analyzer for you nor does it
-provide debugging utilities. i myself consider this a benefit, but it's up to your judgement.
+provide debugging utilities. whether that's better or not depends on your use case!
+
+## related projects
+- [rustaceanvim](https://github.com/mrcjkb/rustaceanvim): spiritual successor to rust-tools, the standard plugin for configuring rust in nvim
+- [crates.nvim](https://github.com/saecki/crates.nvim): plugin to manage crates.io dependencies in your Cargo.toml
