@@ -19,7 +19,7 @@ local function open_parent_module()
 
             -- HACK: workaround for https://github.com/neovim/neovim/issues/19492
             local position = response.result
-            if vim.tbl_isarray(position) then
+            if vim.isarray(position) then
                 position = position[1]
             end
 
