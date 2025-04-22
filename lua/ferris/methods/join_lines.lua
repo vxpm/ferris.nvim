@@ -5,7 +5,8 @@ local error = require("ferris.private.error")
 local function join_lines(r)
     if not error.ensure_ra() then return end
 
-    local params = vim.lsp.util.make_given_range_params(nil, nil, 0, lsp.offset_encoding());
+    local buf = vim.api.nvim_get_current_buf()
+    local params = vim.lsp.util.make_given_range_params(nil, nil, buf, lsp.offset_encoding());
     params.ranges = { params.range }
     params.range = nil
 
@@ -21,7 +22,7 @@ local function join_lines(r)
             return
         end
 
-        vim.lsp.util.apply_text_edits(response.result, 0, lsp.offset_encoding())
+        vim.lsp.util.apply_text_edits(response.result, buf, lsp.offset_encoding())
     end)
 end
 
