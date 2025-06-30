@@ -58,6 +58,10 @@ end
 ---@param client lsp.Client
 ---@return boolean
 function M.client_is_ra(client)
+    if vim.fn.has "nvim-0.11" == 1 then
+        return client.server_info and client.server_info.name == "rust-analyzer"
+    end
+
     -- test by name
     if client.name == "rust_analyzer" or client.name == "rust-analyzer" then
         return true
