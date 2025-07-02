@@ -66,7 +66,7 @@ function M.client_is_ra(client)
     -- test by a rust-analyzer specific request
     -- WARN: lua_ls says this is private - but neovim api does not say anything
     -- about it being so..
-    local response = client.request_sync("rust-analyzer/analyzerStatus", {}, 100, 0)
+    local response = client:request_sync("rust-analyzer/analyzerStatus", {}, 100, 0)
     return response ~= nil and response.result ~= nil
 end
 
