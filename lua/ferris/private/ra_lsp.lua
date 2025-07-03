@@ -55,33 +55,23 @@ function M.experimental_request(method, params, handler)
 end
 
 ---Returns whether a client is Rust-Analyzer or not.
----@param client lsp.Client
+---@param client vim.lsp.Client
 ---@return boolean
 function M.client_is_ra(client)
-    if vim.fn.has "nvim-0.11" == 1 then
-        return client.server_info and client.server_info.name == "rust-analyzer"
-    end
-
-    -- test by name
-    if client.name == "rust_analyzer" or client.name == "rust-analyzer" then
-        return true
-    end
-
-    -- test by a rust-analyzer specific request
-    -- WARN: lua_ls says this is private - but neovim api does not say anything
-    -- about it being so..
-    local response = client.request_sync("rust-analyzer/analyzerStatus", {}, 100, 0)
-    return response ~= nil and response.result ~= nil
+    -- Test by server info if available, otherwise just check for the client name.
+    return (client.server_info and client.server_info.name == "rust-analyzer")
+        or (client.name == "rust-analyzer" or client.name == "rust_analyzer")
 end
 
 ---Returns the client ID of Rust-Analyzer in the given buffer.
 ---@param bufnr integer? # The buffer number or nil for current
 ---@return integer? # The client ID or nil if RA is not found
 function M.ra_client_id(bufnr)
+    ---@diagnostic disable-next-line:redefined-local
     local bufnr = bufnr or 0
     local clients = {}
-    local vim_version = vim.version()
-    if vim_version.minor <= 9 then
+    if vim.version().minor <= 9 then
+        ---@diagnostic disable-next-line:deprecated It's ok - we've checked!
         clients = vim.lsp.buf_get_clients(bufnr)
     else
         clients = vim.lsp.get_clients({ bufnr = bufnr })
