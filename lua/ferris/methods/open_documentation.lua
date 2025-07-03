@@ -6,7 +6,9 @@ local config = require("ferris.private.config")
 local function open_documentation()
     if not error.ensure_ra() then return end
 
-    lsp.experimental_request("externalDocs", vim.lsp.util.make_position_params(0, lsp.offset_encoding()),
+    lsp.experimental_request(
+        "externalDocs",
+        vim.lsp.util.make_position_params(0, lsp.offset_encoding()),
         function(response)
             if response.result == nil then
                 if response.error == nil then
@@ -30,7 +32,8 @@ local function open_documentation()
             cmd.mods.silent = true
 
             vim.api.nvim_cmd(cmd, {})
-        end)
+        end
+    )
 end
 
 return open_documentation

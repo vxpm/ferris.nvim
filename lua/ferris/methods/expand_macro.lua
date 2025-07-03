@@ -9,8 +9,7 @@ local function expand_macro()
     lsp.request("expandMacro", vim.lsp.util.make_position_params(0, lsp.offset_encoding()), function(response)
         if response.result == nil then
             if response.error == nil then
-                error.raise(
-                    "no answer from rust-analyzer for macro expansion in given cursor position")
+                error.raise("no answer from rust-analyzer for macro expansion in given cursor position")
                 return
             end
 

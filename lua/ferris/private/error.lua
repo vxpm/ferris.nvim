@@ -11,10 +11,7 @@ end
 ---@param message string # The error message in case it isn't
 ---@return boolean # Returns the condition
 function M.on(condition, message)
-    if not condition then
-        M.raise(message)
-    end
-
+    if not condition then M.raise(message) end
     return condition
 end
 
@@ -22,7 +19,7 @@ end
 ---raise an error if not
 ---@return boolean # Whether Rust-Analyzer is attached or not
 function M.ensure_ra()
-    if not lsp.current_buf_has_ra() then
+    if not lsp.ra_client() then
         M.raise("no rust-analyzer instance found attached to current buffer")
         return false
     end
@@ -34,7 +31,17 @@ end
 ---@param context string # The context of the error
 ---@param err LspResponseError # The LSP error the message is based on
 function M.raise_lsp_error(context, err)
-    M.raise(context .. ": [" .. (tostring(err.code) or "unknown code") .. "] " .. (err.description or "(no description)"))
+    local codes = {
+        [-32700] = "parse error",
+        [-32600] = "invalid request",
+        [-32601] = "method not found",
+        [-32602] = "invalid parameters",
+        [-32603] = "internal error",
+    }
+
+    local code = codes[err.code] or "unknown code"
+    local description = (err.description and (" - " .. err.description)) or ""
+    M.raise(context .. ": " .. code .. description)
 end
 
 return M

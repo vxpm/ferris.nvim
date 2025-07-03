@@ -5,7 +5,9 @@ local error = require("ferris.private.error")
 local function open_parent_module()
     if not error.ensure_ra() then return end
 
-    lsp.experimental_request("parentModule", vim.lsp.util.make_position_params(0, lsp.offset_encoding()),
+    lsp.experimental_request(
+        "parentModule",
+        vim.lsp.util.make_position_params(0, lsp.offset_encoding()),
         function(response)
             if response.result == nil then
                 if response.error == nil then
@@ -19,16 +21,16 @@ local function open_parent_module()
 
             -- HACK: workaround for https://github.com/neovim/neovim/issues/19492
             local position = response.result
-            if vim.isarray(position) then
-                position = position[1]
-            end
+            if vim.isarray(position) then position = position[1] end
 
-            if vim.fn.has "nvim-0.11" == 1 then
-              vim.lsp.util.show_document(position, "utf-8", { reuse_win = true, focus = true })
+            if vim.version().minor >= 11 then
+                vim.lsp.util.show_document(position, "utf-8", { reuse_win = true, focus = true })
             else
-              vim.lsp.util.jump_to_location(position, "utf-8", true)
+                ---@diagnostic disable-next-line:deprecated It's ok - we've checked!
+                vim.lsp.util.jump_to_location(position, "utf-8", true)
             end
-        end)
+        end
+    )
 end
 
 return open_parent_module

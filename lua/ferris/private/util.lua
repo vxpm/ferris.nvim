@@ -26,9 +26,7 @@ end
 function M.max_key(tbl)
     local max = 0
     for i, _ in pairs(tbl) do
-        if i > max then
-            max = i
-        end
+        if i > max then max = i end
     end
 
     return max

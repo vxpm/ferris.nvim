@@ -9,8 +9,7 @@ local function view_item_tree()
     lsp.request("viewItemTree", { textDocument = vim.lsp.util.make_text_document_params(0) }, function(response)
         if response.result == nil then
             if response.error == nil then
-                error.raise(
-                    "no answer from rust-analyzer for item tree in given document")
+                error.raise("no answer from rust-analyzer for item tree in given document")
                 return
             end
 

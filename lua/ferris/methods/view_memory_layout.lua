@@ -1,3 +1,5 @@
+---@diagnostic disable:redefined-local
+
 local view = require("ferris.private.view")
 local lsp = require("ferris.private.ra_lsp")
 local error = require("ferris.private.error")
@@ -35,13 +37,13 @@ end
 ---Returns the header of the field.
 ---@return string # The header.
 function Field:header()
-    return self.name .. ': ' .. self.type
+    return self.name .. ": " .. self.type
 end
 
 ---Returns the body of the field.
 ---@return string # The body.
 function Field:body()
-    return 'size: ' .. tostring(self.size) .. ', align: ' .. tostring(self.alignment)
+    return "size: " .. tostring(self.size) .. ", align: " .. tostring(self.alignment)
 end
 
 ---Returns the required cell width of the field.
@@ -67,7 +69,7 @@ local function to_tree(list)
             type = ra_node.typename,
             size = ra_node.size,
             offset = ra_node.offset,
-            alignment = ra_node.alignment
+            alignment = ra_node.alignment,
         })
 
         local node = tree.Node.new(field)
@@ -104,9 +106,7 @@ function FieldGrid:column_width(index)
     for _, row in pairs(self) do
         if row[index] ~= nil then
             local cell_width = row[index]:cell_width()
-            if cell_width > max then
-                max = cell_width
-            end
+            if cell_width > max then max = cell_width end
         end
     end
 
@@ -131,9 +131,7 @@ function FieldGrid:width()
     local max = 0
     for _, row in pairs(self) do
         local width = util.max_key(row)
-        if width > max then
-            max = width
-        end
+        if width > max then max = width end
     end
 
     return max
@@ -155,9 +153,7 @@ local function to_grid(tree)
         -- ignore zero-sized types as they don't actually
         -- contribute to the layout of the type and might
         -- clash with non-zsts at the same offset
-        if field.size == 0 then
-            return
-        end
+        if field.size == 0 then return end
 
         -- Field offsets are relative to their parent,
         -- so make them relative to root
@@ -192,9 +188,7 @@ function FieldGrid:render_first_divisor()
     local offsets = self:offsets()
     local first_divisor = tostring(0) .. string.rep(" ", self:offset_column_len() - 1) .. "┼"
     for column_index = 1, self:width() do
-        if self[offsets[1]][column_index] == nil then
-            break
-        end
+        if self[offsets[1]][column_index] == nil then break end
 
         first_divisor = first_divisor .. string.rep("─", self:column_width(column_index) + 2) .. "┼"
     end
@@ -221,9 +215,7 @@ function FieldGrid:render_divisor(row)
 
     -- if there is a next row, display its offset in this divisor
     local offset_string = ""
-    if next_row_offset ~= nil then
-        offset_string = tostring(next_row_offset)
-    end
+    if next_row_offset ~= nil then offset_string = tostring(next_row_offset) end
 
     local offset_string_padding = self:offset_column_len() - string.len(offset_string)
     local divisor = offset_string .. string.rep(" ", offset_string_padding) .. "┼"
@@ -232,19 +224,14 @@ function FieldGrid:render_divisor(row)
     for column = 1, self:width() do
         -- if we are in the last row and past it's end, we can stop early
         local last_row_and_past_end = next_row_offset == nil and column > util.max_key(row_elements)
-        if last_row_and_past_end then
-            break
-        end
+        if last_row_and_past_end then break end
 
         -- if there's a field below or we are not past the next row's
         -- maximum index, then draw a divisor
         local past_row_max = column > util.max_key(row_elements)
         local past_next_row_max = column > util.max_key(next_row_elements)
-        if past_row_max and past_next_row_max then
-            break
-        end
+        if past_row_max and past_next_row_max then break end
 
-        local cell_has_field = row_elements[column] ~= nil
         local next_row_cell_has_field = next_row_elements[column] ~= nil
         if next_row_offset == nil or next_row_cell_has_field or (not past_row_max and past_next_row_max) then
             divisor = divisor .. string.rep("─", self:column_width(column) + 2) .. "┼"
@@ -268,9 +255,7 @@ function FieldGrid:render_cell(row, col)
     local column_width = self:column_width(col)
 
     local result = { header = "", body = "" }
-    if col > last_column then
-        return result
-    end
+    if col > last_column then return result end
 
     local barrier = " │ "
     if cell_element == nil then
@@ -294,7 +279,6 @@ end
 ---@return { header: string, body: string }
 function FieldGrid:render_row(row)
     local row_offset = self:get_offset(row)
-    local row_elements = self[row_offset]
 
     local row_headers = string.rep(" ", self:offset_column_len()) .. "│ "
     local row_bodies = string.rep(" ", self:offset_column_len()) .. "│ "
@@ -335,7 +319,9 @@ end
 local function view_memory_layout()
     if not error.ensure_ra() then return end
 
-    lsp.request("viewRecursiveMemoryLayout", vim.lsp.util.make_position_params(0, lsp.offset_encoding()),
+    lsp.request(
+        "viewRecursiveMemoryLayout",
+        vim.lsp.util.make_position_params(0, lsp.offset_encoding()),
         function(response)
             if response.result == nil then
                 if response.error == nil then
@@ -351,7 +337,8 @@ local function view_memory_layout()
             local tree = to_tree(list)
             local grid = to_grid(tree)
             view.open("memory_layout", grid:render(), "Memory Layout of the " .. tree.value.type .. " type")
-        end)
+        end
+    )
 end
 
 return view_memory_layout

@@ -33,7 +33,7 @@ function M.open(tag, view, header, filetype)
         VIEWS[tag] = vim.api.nvim_create_buf(false, true)
 
         -- create new window for view
-        vim.cmd('vsplit')
+        vim.cmd("vsplit")
         local win_id = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win_id, VIEWS[tag])
 
@@ -43,7 +43,7 @@ function M.open(tag, view, header, filetype)
             callback = function(args)
                 VIEWS[tag] = nil
                 return true
-            end
+            end,
         })
     end
 

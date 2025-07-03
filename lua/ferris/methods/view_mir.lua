@@ -9,10 +9,8 @@ local function view_mir()
     lsp.request("viewMir", vim.lsp.util.make_position_params(0, lsp.offset_encoding()), function(response)
         if response.result == nil or response.result == "Not inside a function body" then
             if response.error == nil then
-                local suffix = (response.result and
-                    "(not inside a function body)") or ""
-                error.raise(
-                    "no answer from rust-analyzer for MIR in given cursor position " .. suffix)
+                local suffix = (response.result and "(not inside a function body)") or ""
+                error.raise("no answer from rust-analyzer for MIR in given cursor position " .. suffix)
                 return
             end
 
