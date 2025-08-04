@@ -27,11 +27,7 @@ local function open_documentation()
                 return
             end
 
-            local cmd_str = ":! " .. config.opts.url_handler .. " " .. url .. " &"
-            local cmd = vim.api.nvim_parse_cmd(cmd_str, {})
-            cmd.mods.silent = true
-
-            vim.api.nvim_cmd(cmd, {})
+            vim.system({ config.opts.url_handler, url }, { detach = true })
         end
     )
 end
