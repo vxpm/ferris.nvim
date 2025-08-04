@@ -20,7 +20,15 @@ local function open_documentation()
                 return
             end
 
-            local url = response.result["local"] or response.result.web or response.result
+            local url = response.result
+            if url["web"] then
+                local path = url["local"] and string.sub(url["local"], 7)
+                if path and vim.uv.fs_stat(path) then
+                    url = url["local"]
+                else
+                    url = url["web"]
+                end
+            end
 
             if type(config.opts.url_handler) ~= "string" then
                 config.opts.url_handler(url)
